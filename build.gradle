@@ -1,0 +1,44 @@
+
+plugins {
+    id 'idea'
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+apply plugin: "java"
+apply plugin: "com.github.johnrengelman.shadow"
+
+group 'ru.otus.example'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.3.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.3.1'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+}
+
+shadowJar {
+    archiveBaseName.set('otus-queues')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Implementation-Title': 'Otus-Queues',
+                'Implementation-Version': 0.1,
+                'Main-Class': 'ru.otus.example.queues.Application'
+    }
+
+}
+
+tasks.build.dependsOn tasks.shadowJar
+
+test {
+    useJUnitPlatform()
+}
