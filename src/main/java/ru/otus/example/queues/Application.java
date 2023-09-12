@@ -1,10 +1,13 @@
 package ru.otus.example.queues;
 
-import ru.otus.example.queues.event.EventType;
 import ru.otus.example.queues.event.listeners.Deleting;
 import ru.otus.example.queues.event.EventMaker;
 import ru.otus.example.queues.event.listeners.Inserting;
-import ru.otus.example.queues.model.Event;
+import ru.otus.example.queues.runnables.DeletingThread;
+import ru.otus.example.queues.runnables.InsertingThread;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Application {
 
@@ -16,8 +19,11 @@ public class Application {
         eventMaker.addListener(inserting);
         eventMaker.addListener(deleting);
 
-        eventMaker.event(new Event(EventType.INSERT, "Some event!"));
-        eventMaker.event(new Event(EventType.DELETE, "Second event"));
+        ExecutorService threadPool = Executors.newFixedThreadPool(2);
+        threadPool.submit(new InsertingThread());
+        threadPool.submit(new DeletingThread());
+
+        threadPool.shutdown();
 
         eventMaker.removeListener(inserting);
         eventMaker.removeListener(deleting);

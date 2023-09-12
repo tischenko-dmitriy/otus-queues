@@ -8,4 +8,6 @@ public class Commons {
 
     public static final EventedList list = new EventedList();
 
+    public static final int counter = 10000;
+
 }
