@@ -1,9 +1,10 @@
 package ru.otus.example.queues;
 
-import ru.otus.example.queues.event.Deleting;
+import ru.otus.example.queues.event.EventType;
+import ru.otus.example.queues.event.listeners.Deleting;
 import ru.otus.example.queues.event.EventMaker;
-import ru.otus.example.queues.event.Inserting;
-import ru.otus.example.queues.model.EventData;
+import ru.otus.example.queues.event.listeners.Inserting;
+import ru.otus.example.queues.model.Event;
 
 public class Application {
 
@@ -15,8 +16,8 @@ public class Application {
         eventMaker.addListener(inserting);
         eventMaker.addListener(deleting);
 
-        eventMaker.event(new EventData("INS", "Some event!"));
-        eventMaker.event(new EventData("DEL", "Second event"));
+        eventMaker.event(new Event(EventType.INSERT, "Some event!"));
+        eventMaker.event(new Event(EventType.DELETE, "Second event"));
 
         eventMaker.removeListener(inserting);
         eventMaker.removeListener(deleting);

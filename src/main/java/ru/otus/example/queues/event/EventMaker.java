@@ -1,6 +1,7 @@
 package ru.otus.example.queues.event;
 
-import ru.otus.example.queues.model.EventData;
+import ru.otus.example.queues.event.listeners.Listener;
+import ru.otus.example.queues.model.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ public class EventMaker {
         listeners.remove(listener);
     }
 
-    public void event(EventData data) {
+    public void event(Event data) {
         listeners.forEach(listener -> {
             try {
                 listener.onUpdate(data);
