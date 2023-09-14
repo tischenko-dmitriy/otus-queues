@@ -13,6 +13,23 @@ public class EventPublisher {
 
     private final LinkedBlockingQueue<Event> eventQueue = new LinkedBlockingQueue<>();
 
+    private boolean isActive = true;
+
+    private final Thread logThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            int k = 0;
+            do {
+                try {
+                    notifySubscribers(eventQueue.take());
+                } catch (InterruptedException e) {
+                    System.out.println("Log thread has been interrupted.");;
+                }
+                k++;
+            } while (isActive);
+        }
+    });
+
     public void publish(Event event) {
         eventQueue.add(event);
     }
@@ -24,18 +41,17 @@ public class EventPublisher {
     }
 
     public void start() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                do {
-                    try {
-                        notifySubscribers(eventQueue.take());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                } while (true);
-            }
-        }).start();
+        logThread.start();
+
+    }
+
+    public void stop() {
+        isActive = false;
+        try {
+            logThread.join();
+        } catch (InterruptedException e) {
+            System.out.println("Stopping thread... Log thread has been interrupted.");;
+        }
     }
 
     public void subscribe(EventType type, Listener listener) {

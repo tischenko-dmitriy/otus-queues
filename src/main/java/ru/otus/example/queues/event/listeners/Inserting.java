@@ -1,14 +1,29 @@
 package ru.otus.example.queues.event.listeners;
 
 import ru.otus.example.queues.model.Event;
+import ru.otus.example.queues.runnables.Commons;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.SimpleTimeZone;
 
 public class Inserting implements Listener {
 
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss.ssssss");
+
+    private final String LOG_TEMPLATE = "%s - Event thread [%s] - Inserting: [%s] - List size: %d.\n";
+
     @Override
     public void onUpdate(Event data) {
-        if ("INS".equals(data.getType())) {
-            System.out.printf("Inserting: [%s].\n", data.getItem().toString());
-        }
+        String log = String.format(
+                LOG_TEMPLATE,
+                simpleDateFormat.format(new Date()),
+                Thread.currentThread().getName(),
+                data.getItem().toString(),
+                Commons.list.getSize()
+        );
+        System.out.printf("%s", log);
+
     }
 
 }
