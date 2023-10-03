@@ -13,9 +13,9 @@ public class EventPublisher {
 
     private final LinkedBlockingQueue<Event> eventQueue = new LinkedBlockingQueue<>();
 
-    private boolean isActive = true;
 
     private final Thread logThread = new Thread(new Runnable() {
+
         @Override
         public void run() {
             int k = 0;
@@ -23,11 +23,12 @@ public class EventPublisher {
                 try {
                     notifySubscribers(eventQueue.take());
                 } catch (InterruptedException e) {
-                    System.out.println("Log thread has been interrupted.");;
+                    throw new RuntimeException(e);
                 }
                 k++;
-            } while (isActive);
+            } while (k < 100);
         }
+
     });
 
     public void publish(Event event) {
@@ -43,15 +44,6 @@ public class EventPublisher {
     public void start() {
         logThread.start();
 
-    }
-
-    public void stop() {
-        isActive = false;
-        try {
-            logThread.join();
-        } catch (InterruptedException e) {
-            System.out.println("Stopping thread... Log thread has been interrupted.");;
-        }
     }
 
     public void subscribe(EventType type, Listener listener) {
